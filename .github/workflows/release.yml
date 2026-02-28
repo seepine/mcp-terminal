@@ -12,7 +12,6 @@ on:
 jobs:
   release-docker:
     runs-on: ubuntu-latest
-    if: ${{ vars.DOCKER_REGISTRY != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
