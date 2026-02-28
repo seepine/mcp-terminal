@@ -1,6 +1,6 @@
 {
   "name": "@seepine/mcp-terminal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "seepine",
   "license": "MIT",
   "description": "Terminal Mcp Server",
@@ -33,7 +33,7 @@
     "typescript": "~5.8.2"
   },
   "bin": {
-    "@seepine/mcp-terminal": "dist/stdio.js"
+    "mcp-terminal": "dist/stdio.js"
   },
   "files": [
     "dist"
