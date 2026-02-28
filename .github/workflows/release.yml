@@ -19,13 +19,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup Docker
+      - name: Docker setup
         uses: seepine/action-setup-docker@v1
         id: meta
         with:
-          registry: ${{ vars.DOCKER_REGISTRY }}
-          username: ${{ vars.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # if has password, it will run docker login
 
       - name: Build and push
         uses: docker/build-push-action@v6
