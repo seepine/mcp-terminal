@@ -8,7 +8,6 @@
 
 - get_systeminfo: 获取系统信息
 - exec_command: 执行命令
-- get_datetime: 获取当前时间
 
 ## Mcp Config
 
