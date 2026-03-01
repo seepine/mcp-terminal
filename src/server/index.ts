@@ -91,19 +91,6 @@ export function createServer(): McpServer {
   )
 
   server.registerTool(
-    'get_datetime',
-    {
-      description: 'get current datetime, like 2026/2/28 16:20:51',
-    },
-    async () => {
-      const text = new Date().toLocaleString()
-      return {
-        content: [{ type: 'text', text }],
-      }
-    },
-  )
-
-  server.registerTool(
     'exec_command',
     {
       description: 'exec command in terminal',
@@ -116,28 +103,44 @@ export function createServer(): McpServer {
       }),
     },
     async ({ command, args = [], timeout = 10000, env, cwd }) => {
-      const ls = spawn(command, args, {
-        timeout,
-        cwd: cwd || process.env['DEFAULT_CWD'],
-        env: {
-          ...process.env,
-          ...env,
-        },
-      })
-      let text = ''
-      await new Promise((resolve) => {
+      const func = new Promise<string>((resolve, reject) => {
+        const ls = spawn(command, args, {
+          timeout,
+          cwd: cwd || process.env['DEFAULT_CWD'] || process.cwd(),
+          shell: true,
+          env: {
+            ...process.env,
+            ...env,
+          },
+        })
+        let text = ''
         ls.stdout.on('data', (data) => {
           text += `${data}`
         })
         ls.stderr.on('data', (data) => {
           text += `${data}`
         })
+        ls.on('error', (error) => {
+          text += `[error]\n${error}`
+        })
         ls.on('close', (code) => {
-          resolve(code)
+          if (code === 0) {
+            resolve(text)
+          } else {
+            reject(`${text}\n[exit_code]: ${code}`)
+          }
         })
       })
-      return {
-        content: [{ type: 'text', text }],
+      try {
+        const text = await func
+        return {
+          content: [{ type: 'text', text }],
+        }
+      } catch (error) {
+        return {
+          isError: true,
+          content: [{ type: 'text', text: error instanceof Error ? error.message : String(error) }],
+        }
       }
     },
   )
